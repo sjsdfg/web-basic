@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="boot-servlet" />
         <module name="servlet-async" />
         <module name="servlet-basic" />
         <module name="springmvc-annotation" />
