@@ -32,3 +32,18 @@
 
 > When using an embedded container, automatic registration of classes annotated
 > with  @WebServlet ,  @WebFilter , and  @WebListener  can be enabled by using  @ServletComponentScan .
+
+### **Spring Boot Servlet 注册**
+
+#### 通过 RegistrationBean 注册
+
+- ServletContextInitializer
+   - RegistrationBean
+       - ServletListenerRegistrationBean
+         	- @WebListener
+       - FilterRegistrationBean
+         	- @WebFilter
+       - ServletRegistrationBean
+         	- @WebServlet
+
+@ServletComponentScan 扫描 package ->  @Web* ->  RegistrationBean Bean 定义 ->  RegistrationBean Bean

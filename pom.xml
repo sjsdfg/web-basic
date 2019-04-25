@@ -15,6 +15,7 @@
         <module>springmvc-async</module>
         <module>springmvc-media-type</module>
         <module>boot-servlet</module>
+        <module>spring-reactive</module>
     </modules>
 
     <properties>
