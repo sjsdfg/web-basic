@@ -11,5 +11,11 @@
 
     <artifactId>spring-reactive</artifactId>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+            <version>3.1.7.RELEASE</version>
+        </dependency>
+    </dependencies>
 </project>
