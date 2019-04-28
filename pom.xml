@@ -17,6 +17,7 @@
         <module>boot-servlet</module>
         <module>spring-reactive</module>
         <module>springboot-mongo</module>
+        <module>springboot-jwt</module>
     </modules>
 
     <properties>

@@ -10,6 +10,7 @@
         <module name="servlet-async" />
         <module name="servlet-basic" />
         <module name="spring-reactive" />
+        <module name="springboot-jwt" />
         <module name="springboot-mongo" />
         <module name="springmvc-annotation" />
         <module name="springmvc-async" />
