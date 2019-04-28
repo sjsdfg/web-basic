@@ -79,7 +79,7 @@ public class PersonController {
         String jwtToken = Jwts.builder().setSubject(username)
                 .claim("roles", "member")
                 .setIssuedAt(new Date())
-                .signWith(SignatureAlgorithm.HS256, "secretkey")
+                .signWith(SignatureAlgorithm.HS256, "secretKey")
                 .compact();
         ResponseResult<String> result = new ResponseResult<>();
         result.setStatusCode("200 OK");
