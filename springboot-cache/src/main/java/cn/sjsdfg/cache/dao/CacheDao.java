@@ -1,6 +1,8 @@
 package cn.sjsdfg.cache.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -16,6 +18,7 @@ import java.util.concurrent.ConcurrentMap;
  * Created by Joe on 2019/5/5.
  */
 @Repository
+@CacheConfig(cacheNames = "mapCache")
 public class CacheDao {
     @Autowired
     private ApplicationContext context;
@@ -33,10 +36,16 @@ public class CacheDao {
         }
     }
 
-    @Cacheable(value = "mapCache", key = "targetClass + methodName +#p0")
+    @Cacheable(key = "targetClass + #p0")
     public String findByKey(String key) {
         System.out.println("findByKey is called " + key);
         return map.getOrDefault(key, "empty");
+    }
+
+    @CachePut(key = "targetClass + #p0")
+    public String updateByKey(String key, String value) {
+        map.put(key, value);
+        return value;
     }
 
     public void showAllCaches() {

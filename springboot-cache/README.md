@@ -142,6 +142,96 @@ class cn.sjsdfg.cache.dao.CacheDaofindByKey1 : 1
 -------- mapCache -----------
 ```
 
+**深入源码，查看它的其它属性**
+
+我们打开`@Cacheable`注解的源码，可以看到该注解提供的其他属性，如：
+
+```java
+String[] cacheNames() default {}; //和value注解差不多，二选一
+String keyGenerator() default ""; //key的生成器。key/keyGenerator二选一使用
+String cacheManager() default ""; //指定缓存管理器
+String cacheResolver() default ""; //或者指定获取解析器
+String condition() default ""; //条件符合则缓存
+String unless() default ""; //条件符合则不缓存
+boolean sync() default false; //是否使用异步模式
+```
+
+### 4. 配置@CacheConfig
+
+当我们需要缓存的地方越来越多，你可以使用 `@CacheConfig(cacheNames = {"myCache"})` 注解来统一指定 `value` 的值，这时可省略 `value`，如果你在你的方法依旧写上了 `value` ，那么依然以方法的 `value` 值为准。
+
+例如以上方法可以简写为：
+
+```java
+@Repository
+@CacheConfig(cacheNames = "mapCache")
+public class CacheDao {
+    //...
+    @Cacheable(key = "targetClass + methodName +#p0")
+    public String findByKey(String key) {
+        System.out.println("findByKey is called " + key);
+        return map.getOrDefault(key, "empty");
+    }
+    //...
+}
+```
+
+**查看它的其它属性**
+
+```java
+String keyGenerator() default "";  //key的生成器。key/keyGenerator二选一使用
+String cacheManager() default "";  //指定缓存管理器
+String cacheResolver() default ""; //或者指定获取解析器
+```
+
+### 5.更新@CachePut
+
+`@CachePut`  注解的作用 主要针对方法配置，能够根据方法的请求参数对其结果进行缓存，和 `@Cacheable`  不同的是，它每次都会触发真实方法的调用 。简单来说就是用户更新缓存数据。但需要注意的是该注解的 `value`  和  `key`  必须与要更新的缓存相同，也就是与 `@Cacheable`  相同。
+
+示例：
+
+```java
+@Cacheable(key = "targetClass + #p0")
+public String findByKey(String key) {
+    System.out.println("findByKey is called " + key);
+    return map.getOrDefault(key, "empty");
+}
+
+@CachePut(key = "targetClass + #p0")
+public String updateByKey(String key, String value) {
+    map.put(key, value);
+    return value;
+}
+```
+
+> **注：**
+>
+> 这里的  **@Cacheable(key = "targetClass + #p0")** 与上文中的 **@Cacheable(key = "targetClass + methodName +#p0") ** 并不相同。原因就是上文所说的
+>
+> - 要注意的是该注解的 `value`  和  `key`  必须与要更新的缓存相同，也就是与 `@Cacheable`  相同。
+>
+> 同时需要注意的是 `@CachePut` 注解的方法返回值不能为 **void**。缓存值的更新与该方法的返回值相关，如果为 **void** 则缓存值会被更新为 **null**
+
+测试方法在 **cn.sjsdfg.cache.CacheTest#testUpdateByKey**
+
+输出结果为：
+
+```java
+findByKey is called 1
+1
+1
+-------- mapCache -----------
+class cn.sjsdfg.cache.dao.CacheDao1 : 1
+-------- mapCache -----------
+123
+-------- mapCache -----------
+class cn.sjsdfg.cache.dao.CacheDao1 : 123
+-------- mapCache -----------
+
+```
+
+可以看到 **class cn.sjsdfg.cache.dao.CacheDao1** 的缓存值从 1 变成了 123。
+
 # 参考资料
 
 1. https://www.cnblogs.com/yueshutong/p/9381540.html

@@ -32,4 +32,15 @@ public class CacheTest {
 
         cacheDao.showAllCaches();
     }
+
+    @Test
+    public void testUpdateByKey() {
+        cacheDao.addDefaultVal();
+        System.out.println(cacheDao.findByKey("1"));
+        System.out.println(cacheDao.findByKey("1"));
+        cacheDao.showAllCaches();
+        cacheDao.updateByKey("1", "123");
+        System.out.println(cacheDao.findByKey("1"));
+        cacheDao.showAllCaches();
+    }
 }
