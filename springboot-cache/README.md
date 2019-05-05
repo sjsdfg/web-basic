@@ -54,5 +54,94 @@ Spring 从 3.1 开始定义了 org.springframework.cache.Cache 和 org.springfra
 | 正则表达式 | matches                                        |
 | 其他类型   | ?.，?[…]，![…]，^[…]，$[…]                     |
 
+## 使用示例
+
+### 1. 依赖
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-cache</artifactId>
+</dependency>
+```
+
+### 2. 开启缓存
+
+在启动类注解 **@EnableCaching** 开启缓存
+
+```java
+package cn.sjsdfg.cache;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
+
+/**
+ * Created by Joe on 2019/5/5.
+ */
+@EnableCaching
+@SpringBootApplication
+public class CacheApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(CacheApplication.class, args);
+    }
+}
+
+```
+
+因为我们没有集成第三方缓存，采用的是 Spring 自带的缓存，其中底层的实现是 `ConcurrentMapCache`。
+
+因而我们实现了一个方法 `cn.sjsdfg.cache.dao.CacheDao#showAllCaches`，可以用于查看所有已经缓存的键值对情况。
+
+```java
+public void showAllCaches() {
+    Collection<String> cacheNames = cacheManager.getCacheNames();
+    for (String cacheName : cacheNames) {
+        System.out.println("-------- " + cacheName + " -----------");
+        ConcurrentMapCache cache = (ConcurrentMapCache)cacheManager.getCache(cacheName);
+        ConcurrentMap<Object, Object> nativeCache = cache.getNativeCache();
+        nativeCache.forEach((key, value) -> System.out.println(key + " : " + value));
+        System.out.println("-------- " + cacheName + " -----------");
+    }
+}
+```
+
+### 3.缓存@Cacheable
+
+`@Cacheable`注解会先查询是否已经有缓存，有会使用缓存，没有则会执行方法并缓存。
+
+```java
+@Cacheable(value = "mapCache", key = "targetClass + methodName +#p0")
+public String findByKey(String key) {
+    System.out.println("findByKey is called " + key);
+    return map.getOrDefault(key, "empty");
+}
+```
+
+此处的`value`是必需的，它指定了你的缓存存放在哪块命名空间。
+
+此处的`key`是使用的spEL表达式，参考上章。这里有一个小坑，如果你把`methodName`换成`method`运行会报错，观察它们的返回类型，原因在于`methodName`是`String`而`methoh`是`Method`。
+
+调用方法的参数必须实现 `Serializable` 接口，否则会报`java.io.NotSerializableException`异常。
+
+到这里，你已经可以运行程序 `cn.sjsdfg.cache.CacheTest#testFindByKey` 检验缓存功能是否实现。
+
+测试输出为：
+
+```java
+findByKey is called 1
+1
+1
+findByKey is called 2
+2
+2
+1
+-------- mapCache -----------
+class cn.sjsdfg.cache.dao.CacheDaofindByKey2 : 2
+class cn.sjsdfg.cache.dao.CacheDaofindByKey1 : 1
+-------- mapCache -----------
+```
+
 # 参考资料
+
 1. https://www.cnblogs.com/yueshutong/p/9381540.html
