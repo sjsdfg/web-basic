@@ -184,7 +184,7 @@ String cacheManager() default "";  //指定缓存管理器
 String cacheResolver() default ""; //或者指定获取解析器
 ```
 
-### 5.更新@CachePut
+### 5. 更新@CachePut
 
 `@CachePut`  注解的作用 主要针对方法配置，能够根据方法的请求参数对其结果进行缓存，和 `@Cacheable`  不同的是，它每次都会触发真实方法的调用 。简单来说就是用户更新缓存数据。但需要注意的是该注解的 `value`  和  `key`  必须与要更新的缓存相同，也就是与 `@Cacheable`  相同。
 
@@ -206,7 +206,7 @@ public String updateByKey(String key, String value) {
 
 > **注：**
 >
-> 这里的  **@Cacheable(key = "targetClass + #p0")** 与上文中的 **@Cacheable(key = "targetClass + methodName +#p0") ** 并不相同。原因就是上文所说的
+> 这里的  **@Cacheable(key = "targetClass + #p0")** 与上文中的  **@Cacheable(key = "targetClass + methodName +#p0") **  并不相同。原因就是上文所说的
 >
 > - 要注意的是该注解的 `value`  和  `key`  必须与要更新的缓存相同，也就是与 `@Cacheable`  相同。
 >
@@ -231,6 +231,17 @@ class cn.sjsdfg.cache.dao.CacheDao1 : 123
 ```
 
 可以看到 **class cn.sjsdfg.cache.dao.CacheDao1** 的缓存值从 1 变成了 123。
+
+**查看它的其它属性**
+
+```java
+String[] cacheNames() default {}; //与value二选一
+String keyGenerator() default "";  //key的生成器。key/keyGenerator二选一使用
+String cacheManager() default "";  //指定缓存管理器
+String cacheResolver() default ""; //或者指定获取解析器
+String condition() default ""; //条件符合则缓存
+String unless() default ""; //条件符合则不缓存
+```
 
 # 参考资料
 

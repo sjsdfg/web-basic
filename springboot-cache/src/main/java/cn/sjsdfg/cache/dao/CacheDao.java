@@ -2,6 +2,7 @@ package cn.sjsdfg.cache.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
@@ -46,6 +47,21 @@ public class CacheDao {
     public String updateByKey(String key, String value) {
         map.put(key, value);
         return value;
+    }
+
+    @CacheEvict(key = "targetClass + #p0")
+    public void deleteOneByKey(String key) {
+        map.remove(key);
+    }
+
+    @CacheEvict(allEntries = true)
+    public void deleteAll() {
+        map.clear();
+    }
+
+    @CacheEvict(allEntries = true, beforeInvocation = true)
+    public void deleteAllBeforeInvoke() {
+        map.clear();
     }
 
     public void showAllCaches() {
