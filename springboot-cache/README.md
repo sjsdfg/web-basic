@@ -206,7 +206,7 @@ public String updateByKey(String key, String value) {
 
 > **注：**
 >
-> 这里的  **@Cacheable(key = "targetClass + #p0")** 与上文中的  **@Cacheable(key = "targetClass + methodName +#p0") **  并不相同。原因就是上文所说的
+> 这里的  **@Cacheable(key = "targetClass + #p0")** 与上文中的  **@Cacheable(key = "targetClass + methodName +#p0")**  并不相同。原因就是上文所说的
 >
 > - 要注意的是该注解的 `value`  和  `key`  必须与要更新的缓存相同，也就是与 `@Cacheable`  相同。
 >
