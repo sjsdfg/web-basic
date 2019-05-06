@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -15,9 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = CacheApplication.class)
 public class CacheTest {
     @Autowired
-    CacheDao cacheDao;
-    @Autowired
-    ApplicationContext context;
+    private CacheDao cacheDao;
 
     @Test
     public void testFindByKey() {
@@ -41,6 +38,30 @@ public class CacheTest {
         cacheDao.showAllCaches();
         cacheDao.updateByKey("1", "123");
         System.out.println(cacheDao.findByKey("1"));
+        cacheDao.showAllCaches();
+    }
+
+    @Test
+    public void testDeleteOneByKey() {
+        cacheDao.addDefaultVal();
+        for (int i = 0; i < 5; i++) {
+            cacheDao.findByKey(String.valueOf(i));
+        }
+        cacheDao.showAllCaches();
+        System.out.println("====调用删除缓存====");
+        cacheDao.deleteOneByKey("1");
+        cacheDao.showAllCaches();
+    }
+
+    @Test
+    public void testDeleteAll() {
+        cacheDao.addDefaultVal();
+        for (int i = 0; i < 5; i++) {
+            cacheDao.findByKey(String.valueOf(i));
+        }
+        cacheDao.showAllCaches();
+        System.out.println("====调用清空所有缓存====");
+        cacheDao.deleteAll();
         cacheDao.showAllCaches();
     }
 }

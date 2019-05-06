@@ -243,6 +243,107 @@ String condition() default ""; //条件符合则缓存
 String unless() default ""; //条件符合则不缓存
 ```
 
+### 6. 清除@CacheEvict
+
+`@CachEvict` 的作用 主要针对方法配置，能够根据一定的条件对缓存进行清空 。
+
+| 属性             | 解释                                                         | 示例                                                 |
+| ---------------- | ------------------------------------------------------------ | ---------------------------------------------------- |
+| allEntries       | 是否清空所有缓存内容，缺省为 false，如果指定为 true，则方法调用后将立即清空所有缓存 | @CachEvict(value=”testcache”,allEntries=true)        |
+| beforeInvocation | 是否在方法执行前就清空，缺省为 false，如果指定为 true，则在方法还没有执行的时候就清空缓存<br>**缺省情况下，如果方法执行抛出异常，则不会清空缓存** | @CachEvict(value=”testcache”，beforeInvocation=true) |
+
+具体实现为：
+
+```java
+@CacheEvict(key = "targetClass + #p0")
+public void deleteOneByKey(String key) {
+    map.remove(key);
+}
+
+@CacheEvict(allEntries = true)
+public void deleteAll() {
+    map.clear();
+}
+
+@CacheEvict(allEntries = true, beforeInvocation = true)
+public void deleteAllBeforeInvoke() {
+    map.clear();
+}
+```
+
+删除单个缓存的示例在 **cn.sjsdfg.cache.CacheTest#testDeleteOneByKey**，其输出为：
+
+```java
+findByKey is called 0
+findByKey is called 1
+findByKey is called 2
+findByKey is called 3
+findByKey is called 4
+-------- mapCache -----------
+class cn.sjsdfg.cache.dao.CacheDao4 : 4
+class cn.sjsdfg.cache.dao.CacheDao3 : 3
+class cn.sjsdfg.cache.dao.CacheDao2 : 2
+class cn.sjsdfg.cache.dao.CacheDao1 : 1
+class cn.sjsdfg.cache.dao.CacheDao0 : 0
+-------- mapCache -----------
+====调用删除缓存====
+-------- mapCache -----------
+class cn.sjsdfg.cache.dao.CacheDao4 : 4
+class cn.sjsdfg.cache.dao.CacheDao3 : 3
+class cn.sjsdfg.cache.dao.CacheDao2 : 2
+class cn.sjsdfg.cache.dao.CacheDao0 : 0
+-------- mapCache -----------
+```
+
+
+
+删除所有缓存的测试示例在 **cn.sjsdfg.cache.CacheTest#testDeleteAll** ，其输出为：
+
+```java
+findByKey is called 0
+findByKey is called 1
+findByKey is called 2
+findByKey is called 3
+findByKey is called 4
+-------- mapCache -----------
+class cn.sjsdfg.cache.dao.CacheDao4 : 4
+class cn.sjsdfg.cache.dao.CacheDao3 : 3
+class cn.sjsdfg.cache.dao.CacheDao2 : 2
+class cn.sjsdfg.cache.dao.CacheDao1 : 1
+class cn.sjsdfg.cache.dao.CacheDao0 : 0
+-------- mapCache -----------
+====调用清空所有缓存====
+-------- mapCache -----------
+-------- mapCache -----------
+```
+
+**其他属性**
+
+```java
+String[] cacheNames() default {}; //与value二选一
+String keyGenerator() default "";  //key的生成器。key/keyGenerator二选一使用
+String cacheManager() default "";  //指定缓存管理器
+String cacheResolver() default ""; //或者指定获取解析器
+String condition() default ""; //条件符合则清空
+```
+
+### 7.组合@Caching
+
+有时候我们可能组合多个Cache注解使用，此时就需要@Caching组合多个注解标签了。
+
+```java
+@Caching(cacheable = {
+    @Cacheable(value = "emp", key = "#p0")
+}, put = {
+    @CachePut(value = "emp", key = "#p0")
+}, evict = {
+    @CacheEvict(value = "emp", key = "#p0")
+})
+public User save(User user) {
+    ....
+}
+```
+
 # 参考资料
 
 1. https://www.cnblogs.com/yueshutong/p/9381540.html
