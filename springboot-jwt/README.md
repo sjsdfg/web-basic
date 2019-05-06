@@ -153,3 +153,4 @@ curl -X GET \
 
 1. [Spring Boot 整合 JWT 实现用户认证 ](https://blog.csdn.net/ltl112358/article/details/79507148)
 2. [JwtBearer 认证 ](https://www.cnblogs.com/Leo_wl/p/7792046.html#_label4)
+3. [SpringBoot-JWT](https://rstyro.github.io/blog/2019/04/16/SpringBoot-JWT/)
