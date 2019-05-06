@@ -19,6 +19,7 @@
         <module>springboot-mongo</module>
         <module>springboot-jwt</module>
         <module>springboot-cache</module>
+        <module>springboot-redis</module>
     </modules>
 
     <properties>

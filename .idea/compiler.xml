@@ -13,6 +13,7 @@
         <module name="springboot-cache" />
         <module name="springboot-jwt" />
         <module name="springboot-mongo" />
+        <module name="springboot-redis" />
         <module name="springmvc-annotation" />
         <module name="springmvc-async" />
         <module name="springmvc-media-type" />
