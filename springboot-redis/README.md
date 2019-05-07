@@ -55,13 +55,13 @@
 
 ## RedisTemplate 常用操作集合
 
-| 方法          | Redis 类型 |
-| :------------ | :--------- |
-| opsForValue() | String     |
-| opsForList()  | List       |
-| opsForHash()  | Hash       |
-| opsForSet()   | Set        |
-| opsForZSet()  | ZSet       |
+| 方法          | Redis 类型 | 备注                      |
+| :------------ | :--------- | ------------------------- |
+| opsForValue() | String     | 对redis字符串类型数据操作 |
+| opsForList()  | List       | 对链表类型的数据操作      |
+| opsForHash()  | Hash       | 对hash类型的数据操作      |
+| opsForSet()   | Set        | 对无序集合类型的数据操作  |
+| opsForZSet()  | ZSet       | 对有序集合类型的数据操作  |
 
 ## Serializer
 
