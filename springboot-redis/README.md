@@ -1,6 +1,29 @@
 
 
+## RedisTemplate 常用操作集合
 
+| 方法          | Redis 类型 |
+| :------------ | :--------- |
+| opsForValue() | String     |
+| opsForList()  | List       |
+| opsForHash()  | Hash       |
+| opsForSet()   | Set        |
+| opsForZSet()  | ZSet       |
+
+## Serializer
+
+目前已经支持的序列化策略：
+
+- JdkSerializationRedisSerializer
+- StringRedisSerializer
+- JacksonJsonRedisSerializer
+- OxmSerializer
+
+其中 JdkSerializationRedisSerializer 和 StringRedisSerializer 是最基础的序列化策略，其中 “JacksonJsonRedisSerializer” 与 “OxmSerializer” 都是基于 String 存储，因此它们是较为“高级”的序列化 (最终还是使用 string 解析以及构建 java 对象)。
+
+```java
+
+```
 
 
 
@@ -19,7 +42,10 @@ Jedis 代码重构变革很大
 | 1.8.4.RELEASE         | 2.9.0        |      |
 | 2.1.x.RELEASE         | 2.9.0        |      |
 
-### 参考资料
+## 参考资料
 
 - [Spring Data Redis](https://docs.spring.io/spring-data/data-redis/docs/current/reference/html/#new-in-2.1.0) 可查询 feature 演进和版本对应关系
 - [**spring-data-keyvalue-examples**](https://github.com/spring-projects/spring-data-keyvalue-examples)
+- [Spring Data Redis简介以及项目Demo，RedisTemplate和 Serializer详解](https://www.cnblogs.com/edwinchen/p/3816938.html)
+
+- [redisTemplate常用集合使用说明(一)](https://357029540.iteye.com/blog/2388706)
