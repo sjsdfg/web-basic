@@ -47,5 +47,9 @@ Jedis 代码重构变革很大
 - [Spring Data Redis](https://docs.spring.io/spring-data/data-redis/docs/current/reference/html/#new-in-2.1.0) 可查询 feature 演进和版本对应关系
 - [**spring-data-keyvalue-examples**](https://github.com/spring-projects/spring-data-keyvalue-examples)
 - [Spring Data Redis简介以及项目Demo，RedisTemplate和 Serializer详解](https://www.cnblogs.com/edwinchen/p/3816938.html)
-
 - [redisTemplate常用集合使用说明(一)](https://357029540.iteye.com/blog/2388706)
+
+## 连接 Redis 工具
+
+- https://github.com/necan/RedisDesktopManager-Windows 提供 RedisManager 的开源编译版本
+- https://github.com/onewe/RedisDesktopManager-Mac 软件的 Mac 版本
