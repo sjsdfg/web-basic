@@ -5,6 +5,8 @@ import cn.sjsdfg.redis.bean.User;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 /**
  * Created by Joe on 2019/5/6.
  */
@@ -36,5 +38,11 @@ public class UserRedisDaoTest extends TestBase {
         System.out.println("-----删除元素------");
         userRedisDao.deleteUser("2");
         System.out.println(userRedisDao.getUser("2"));
+    }
+
+    @Test
+    public void testQueryAll() {
+        List<Object> result = userRedisDao.queryAll();
+        result.forEach(System.out::println);
     }
 }

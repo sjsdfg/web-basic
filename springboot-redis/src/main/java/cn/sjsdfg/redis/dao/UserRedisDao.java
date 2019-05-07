@@ -8,7 +8,9 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Created by Joe on 2019/5/6.
@@ -50,5 +52,18 @@ public class UserRedisDao {
     public boolean deleteUser(String id) {
         Boolean result = redisTemplate.delete(id);
         return Objects.isNull(result) ? false : result;
+    }
+
+    public List<Object> queryAll() {
+        return redisTemplate.executePipelined((RedisConnection redisConnection) -> {
+            RedisSerializer<String> stringSerializer = redisTemplate.getStringSerializer();
+            Set<String> keys = redisTemplate.keys("*");
+            if (Objects.nonNull(keys)) {
+                for (String key : keys) {
+                    redisConnection.get(stringSerializer.serialize(key));
+                }
+            }
+            return null;
+        });
     }
 }

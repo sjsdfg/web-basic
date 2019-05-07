@@ -1,43 +1,43 @@
 
 
-## Redis的数据类型
+## Redis 的数据类型
 
-### String字符串
+### String 字符串
 
-- string是redis最基本的类型，一个key对应一个value。
-- string类型是二进制安全的。意思是redis的string可以包含任何数据。比如jpg图片或者序列化的对象 。
-- string类型是Redis最基本的数据类型，一个键最大能存储512MB。
-- [String类型的操作参考](http://www.runoob.com/redis/redis-strings.html)
+- string 是 redis 最基本的类型，一个 key 对应一个 value。
+- string 类型是二进制安全的。意思是 redis 的 string 可以包含任何数据。比如 jpg 图片或者序列化的对象 。
+- string 类型是 Redis 最基本的数据类型，一个键最大能存储 512MB。
+- [String 类型的操作参考 ](http://www.runoob.com/redis/redis-strings.html)
 
 ### 链表
 
-- redis列表是简单的字符串列表，排序为插入的顺序。列表的最大长度为2^32-1。
-- redis的列表是使用链表实现的，这意味着，即使列表中有上百万个元素，增加一个元素到列表的头部或尾部的操作都是在常量的时间完成。
-- 可以用列表获取最新的内容（像帖子，微博等），用ltrim很容易就会获取最新的内容，并移除旧的内容。
-- 用列表可以实现生产者消费者模式，生产者调用lpush添加项到列表中，消费者调用rpop从列表中提取，如果没有元素，则轮询去获取，或者使用brpop等待生产者添加项到列表中。
-- [List类型的操作参考](http://www.runoob.com/redis/redis-lists.html)
+- redis 列表是简单的字符串列表，排序为插入的顺序。列表的最大长度为 2^32-1。
+- redis 的列表是使用链表实现的，这意味着，即使列表中有上百万个元素，增加一个元素到列表的头部或尾部的操作都是在常量的时间完成。
+- 可以用列表获取最新的内容（像帖子，微博等），用 ltrim 很容易就会获取最新的内容，并移除旧的内容。
+- 用列表可以实现生产者消费者模式，生产者调用 lpush 添加项到列表中，消费者调用 rpop 从列表中提取，如果没有元素，则轮询去获取，或者使用 brpop 等待生产者添加项到列表中。
+- [List 类型的操作参考 ](http://www.runoob.com/redis/redis-lists.html)
 
 ### 集合
 
-- redis集合是无序的字符串集合，集合中的值是唯一的，无序的。可以对集合执行很多操作，例如，测试元素是否存在，对多个集合执行交集、并集和差集等等。
-- 我们通常可以用集合存储一些无关顺序的，表达对象间关系的数据，例如用户的角色，可以用sismember很容易就判断用户是否拥有某个角色。
+- redis 集合是无序的字符串集合，集合中的值是唯一的，无序的。可以对集合执行很多操作，例如，测试元素是否存在，对多个集合执行交集、并集和差集等等。
+- 我们通常可以用集合存储一些无关顺序的，表达对象间关系的数据，例如用户的角色，可以用 sismember 很容易就判断用户是否拥有某个角色。
 - 在一些用到随机值的场合是非常适合的，可以用 srandmember/spop 获取/弹出一个随机元素。
-  同时，使用@EnableCaching开启声明式缓存支持，这样就可以使用基于注解的缓存技术。注解缓存是一个对缓存使用的抽象，通过在代码中添加下面的一些注解，达到缓存的效果。
-- [Set类型的操作参考](http://www.runoob.com/redis/redis-sets.html)
+  同时，使用@EnableCaching 开启声明式缓存支持，这样就可以使用基于注解的缓存技术。注解缓存是一个对缓存使用的抽象，通过在代码中添加下面的一些注解，达到缓存的效果。
+- [Set 类型的操作参考 ](http://www.runoob.com/redis/redis-sets.html)
 
 ### ZSet 有序集合
 
-- 有序集合由唯一的，不重复的字符串元素组成。有序集合中的每个元素都关联了一个浮点值，称为分数。可以把有序看成hash和集合的混合体，分数即为hash的key。
+- 有序集合由唯一的，不重复的字符串元素组成。有序集合中的每个元素都关联了一个浮点值，称为分数。可以把有序看成 hash 和集合的混合体，分数即为 hash 的 key。
 - 有序集合中的元素是按序存储的，不是请求时才排序的。
-- [ZSet类型的操作类型](http://www.runoob.com/redis/redis-sorted-sets.html)
+- [ZSet 类型的操作类型 ](http://www.runoob.com/redis/redis-sorted-sets.html)
 
 ### Hash-哈希
 
-- redis的哈希值是字符串字段和字符串之间的映射，是表示对象的完美数据类型。
+- redis 的哈希值是字符串字段和字符串之间的映射，是表示对象的完美数据类型。
 - 哈希中的字段数量没有限制，所以可以在你的应用程序以不同的方式来使用哈希。
-- [Hash类型的操作参考](http://www.runoob.com/redis/redis-hashes.html)
+- [Hash 类型的操作参考 ](http://www.runoob.com/redis/redis-hashes.html)
 
-## 关于key的设计
+## 关于 key 的设计
 
 ### key 的存活时间：
 
@@ -57,9 +57,9 @@
 
 | 方法          | Redis 类型 | 备注                      |
 | :------------ | :--------- | ------------------------- |
-| opsForValue() | String     | 对redis字符串类型数据操作 |
+| opsForValue() | String     | 对 redis 字符串类型数据操作 |
 | opsForList()  | List       | 对链表类型的数据操作      |
-| opsForHash()  | Hash       | 对hash类型的数据操作      |
+| opsForHash()  | Hash       | 对 hash 类型的数据操作      |
 | opsForSet()   | Set        | 对无序集合类型的数据操作  |
 | opsForZSet()  | ZSet       | 对有序集合类型的数据操作  |
 
