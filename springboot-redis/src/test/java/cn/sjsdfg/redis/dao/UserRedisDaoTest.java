@@ -27,4 +27,14 @@ public class UserRedisDaoTest extends TestBase {
 
         System.out.println(userRedisDao.getUserByLambda("1"));
     }
+
+    @Test
+    public void testDelete() {
+        User user = new User("2", "2", "2");
+        userRedisDao.add(user);
+        System.out.println(userRedisDao.getUser("2"));
+        System.out.println("-----删除元素------");
+        userRedisDao.deleteUser("2");
+        System.out.println(userRedisDao.getUser("2"));
+    }
 }

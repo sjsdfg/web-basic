@@ -8,6 +8,8 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Repository;
 
+import java.util.Objects;
+
 /**
  * Created by Joe on 2019/5/6.
  */
@@ -43,5 +45,10 @@ public class UserRedisDao {
             RedisSerializer<Object> valueSerializer = (RedisSerializer<Object>) redisTemplate.getValueSerializer();
             return (User) valueSerializer.deserialize(bytes);
         });
+    }
+
+    public boolean deleteUser(String id) {
+        Boolean result = redisTemplate.delete(id);
+        return Objects.isNull(result) ? false : result;
     }
 }
