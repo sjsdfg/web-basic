@@ -76,6 +76,76 @@
 
 > **如果你的数据需要被第三方工具解析，那么数据应该使用 StringRedisSerializer 而不是 JdkSerializationRedisSerializer。**
 
+## Redis Pipline
+
+通过 RedisTemplete 实现 pipline 可以参考如下代码：
+
+```java
+public List<Object> queryAll() {
+    return redisTemplate.executePipelined((RedisConnection redisConnection) -> {
+        RedisSerializer<String> stringSerializer = redisTemplate.getStringSerializer();
+        Set<String> keys = redisTemplate.keys("*");
+        if (Objects.nonNull(keys)) {
+            for (String key : keys) {
+                redisConnection.get(stringSerializer.serialize(key));
+            }
+        }
+        return null;
+    });
+}
+```
+
+需要注意的是 `redisTemplate.executePipelined()` 里面的方法返回值必须为 null.
+
+原因是该方法的源码如下：
+
+```java
+public List<Object> executePipelined(final RedisCallback<?> action) {
+    return executePipelined(action, valueSerializer);
+}
+
+public List<Object> executePipelined(final RedisCallback<?> action, final RedisSerializer<?> resultSerializer) {
+    return execute(new RedisCallback<List<Object>>() {
+        public List<Object> doInRedis(RedisConnection connection) throws DataAccessException {
+            connection.openPipeline();
+            boolean pipelinedClosed = false;
+            try {
+                Object result = action.doInRedis(connection);
+                if (result != null) {
+                    throw new InvalidDataAccessApiUsageException(
+                            "Callback cannot return a non-null value as it gets overwritten by the pipeline");
+                }
+                List<Object> closePipeline = connection.closePipeline();
+                pipelinedClosed = true;
+                return deserializeMixedResults(closePipeline, resultSerializer, resultSerializer, resultSerializer);
+            } finally {
+                if (!pipelinedClosed) {
+                    connection.closePipeline();
+                }
+            }
+        }
+    });
+}
+```
+
+在代码段中有如下的判断：
+
+```java
+Object result = action.doInRedis(connection);
+if (result != null) {
+    throw new InvalidDataAccessApiUsageException(
+        "Callback cannot return a non-null value as it gets overwritten by the pipeline");
+}
+```
+
+因此如果所传入的方法如果不为空，则会抛出异常，导致程序运行失败。
+
+### 注意
+
+- doInRedis 中的 redis 操作不会立刻执行
+- 所有 redis 操作会在 connection.closePipeline() 之后一并提交到 redis 并执行，这是 pipeline 方式的优势
+- 所有操作的执行结果为 executePipelined() 的返回值
+
 ## spring-data-redis 和 jedis 版本对应收集总结
 
 如果不使用对饮版本的 Jedis，在项目构建的时候必定会出现 **java.lang.NoClassFoundException**。

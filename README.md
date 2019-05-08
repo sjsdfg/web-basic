@@ -10,6 +10,9 @@
 - maven helper
 - checkstyle
 - Eclipse Code Formatter
+- Spring Assistant
+- FindBugs
+- GsonFormat：根据 json 文本生成 Java 类
 - [Intellij idea用快捷键自动生成序列化id](https://blog.csdn.net/u013806366/article/details/51911529/)
 - [idea使用zsh终端](https://blog.csdn.net/z_k_h/article/details/85000229)
 
