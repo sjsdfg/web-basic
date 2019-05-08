@@ -140,11 +140,181 @@ if (result != null) {
 
 因此如果所传入的方法如果不为空，则会抛出异常，导致程序运行失败。
 
-### 注意
+**注意：**
 
 - doInRedis 中的 redis 操作不会立刻执行
 - 所有 redis 操作会在 connection.closePipeline() 之后一并提交到 redis 并执行，这是 pipeline 方式的优势
 - 所有操作的执行结果为 executePipelined() 的返回值
+
+## RedisTemplete 执行 lua 脚本
+
+### Redis 命令行运行 Lua 脚本
+
+假定我们有如下 lua 脚本：
+
+```lua
+--获取KEY
+local key1 = KEYS[1]
+local key2 = KEYS[2]
+ 
+-- 获取ARGV[1],这里对应到应用端是一个List<Map>.
+--  注意，这里接收到是的字符串，所以需要用csjon库解码成table类型
+local receive_arg_json =  cjson.decode(ARGV[1])
+ 
+--返回的变量
+local result = {}
+ 
+--打印日志到reids
+--注意，这里的打印日志级别，需要和redis.conf配置文件中的日志设置级别一致才行
+redis.log(redis.LOG_DEBUG,key1)
+redis.log(redis.LOG_DEBUG,key2)
+redis.log(redis.LOG_DEBUG, ARGV[1],#ARGV[1])
+ 
+--获取ARGV内的参数并打印
+local expire = receive_arg_json.expire
+local times = receive_arg_json.times
+redis.log(redis.LOG_DEBUG,tostring(times))
+redis.log(redis.LOG_DEBUG,tostring(expire))
+ 
+--往redis设置值
+redis.call("set",key1,times)
+redis.call("incr",key2)
+redis.call("expire",key2,expire)
+ 
+--用一个临时变量来存放json,json是要放入要返回的数组中的
+local jsonRedisTemp={}
+jsonRedisTemp[key1] = redis.call("get",key1)
+jsonRedisTemp[key2] = redis.call("get", key2)
+jsonRedisTemp["ttl"] = redis.call("ttl",key2)
+redis.log(redis.LOG_DEBUG, cjson.encode(jsonRedisTemp))
+ 
+ 
+result[1] = cjson.encode(jsonRedisTemp) --springboot redistemplate接收的是List,如果返回的数组内容是json对象,需要将json对象转成字符串,客户端才能接收
+result[2] = ARGV[1] --将源参数内容一起返回
+redis.log(redis.LOG_DEBUG,cjson.encode(result)) --打印返回的数组结果，这里返回需要以字符返回
+ 
+return result
+```
+
+我们可以使用如下命令行查看执行结果：
+
+其基本命令结构如下：
+
+```shell
+redis-cli [--ldb] --eval script [numkeys] key [key ...] , arg [arg ...]
+```
+
+- **--eval**：告诉redis客户端去加载Lua脚本，后面跟着的就是 lua 脚本的路径
+- **--ldb** ：进行命令调试的必要参数
+- **numkeys**：指定后续参数有几个key。可省略
+- **key [key ...]**：是要操作的键，可以指定多个，在lua脚本中通过`KEYS[1]`, `KEYS[2]`获取
+- **arg [arg ...]**，参数，在lua脚本中通过`ARGV[1]`, `ARGV[2]`获取。
+
+> 注意： KEYS和ARGV中间的 ',' 两边的空格，不能省略
+
+针对本例中的 Lua 脚本其对应的命令行如下：
+
+```shell
+bin/redis-cli -h localhost -p 7379 -a zcvbnm --ldb --eval script/LimitLoadTimes.lua count rate.limiting:127.0.0.1 , "{\"expire\":\"10000\",\"times\":\"10\"}"
+```
+
+其他的一些参数
+
+- **-h** 修改后的ip **-a** 修改后的密码 **-p** 修改后的端口号
+
+结果输出为：
+
+```shell
+[root@VM_0_12_centos redis-4.0.8]# bin/redis-cli -h localhost -p 7379 -a zcvbnm --ldb --eval script/LimitLoadTimes.lua count rate.limiting:127.0.0.1 , "{\"expire\":\"10000\",\"times\":\"10\"}"
+Lua debugging session started, please use:
+quit    -- End the session.
+restart -- Restart the script in debug mode again.
+help    -- Show Lua script debugging commands.
+
+* Stopped at 1, stop reason = step over
+-> 1   local key1 = KEYS[1]
+lua debugger> continue
+
+1) "{\"rate.limiting:127.0.0.1\":\"1\",\"count\":\"10\",\"ttl\":10000}"
+2) "{\"expire\":\"10000\",\"times\":\"10\"}"
+```
+
+### 使用 Java 运行 Lua 脚本
+
+实现代码如下：
+
+```java
+package cn.sjsdfg.redis.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.scripting.support.ResourceScriptSource;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Created by Joe on 2019/5/8.
+ */
+@Service
+public class LuaScriptService {
+    @Autowired
+    @Qualifier("customRedisTemplate")
+    private RedisTemplate<String, Object> redisTemplate;
+
+    private DefaultRedisScript<List> getRedisScript;
+
+    @PostConstruct
+    public void init(){
+        getRedisScript = new DefaultRedisScript<List>();
+        getRedisScript.setResultType(List.class);
+        getRedisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("luascript/LimitLoadTimes.lua")));
+    }
+
+    public void redisAddScriptExec(){
+        /**
+         * List设置lua的KEYS
+         */
+        List<String> keyList = new ArrayList<>();
+        keyList.add("count");
+        keyList.add("rate.limiting:127.0.0.1");
+
+        /**
+         * 用Mpa设置Lua的ARGV[1]
+         */
+        Map<String,Object> argvMap = new HashMap<String,Object>();
+        argvMap.put("expire", 10000);
+        argvMap.put("times", 10);
+
+        /**
+         * 调用脚本并执行
+         */
+        List result = redisTemplate.execute(getRedisScript, keyList, argvMap);
+        System.out.println(result);
+    }
+}
+```
+
+测试代码在 **cn.sjsdfg.redis.service.LuaScriptServiceTest#testRedisAddScriptExec**，其输出为：
+
+```java
+[{rate.limiting:127.0.0.1=3, count=10, ttl=10000}, {times=10, expire=10000}]
+```
+
+与前面直接执行 lua 脚本的输出结果一致。
+
+### 注意
+
+1. Lua脚本可以在redis单机模式、主从模式、Sentinel集群模式下正常使用，但是无法在分片集群模式下使用。（脚本操作的key可能不在同一个分片）
+2. **Lua**脚本中尽量避免使用循环操作（可能引发死循环问题），尽量避免长时间运行。
+3. redis在执行lua脚本时，默认最长运行时间时5秒，当脚本运行时间超过这一限制后，Redis将开始接受其他命令但不会执行（以确保脚本的原子性，因为此时脚本并没有被终止），而是会返回“BUSY”错误。
 
 ## spring-data-redis 和 jedis 版本对应收集总结
 
@@ -164,10 +334,10 @@ Jedis 代码重构变革很大
 ## 参考资料
 
 - [Spring Data Redis](https://docs.spring.io/spring-data/data-redis/docs/current/reference/html/#new-in-2.1.0) 可查询 feature 演进和版本对应关系
-- [**spring-data-keyvalue-examples**](https://github.com/spring-projects/spring-data-keyvalue-examples)
+- [spring-data-keyvalue-examples](https://github.com/spring-projects/spring-data-keyvalue-examples)
 - [Spring Data Redis 简介以及项目 Demo，RedisTemplate 和 Serializer 详解 ](https://www.cnblogs.com/edwinchen/p/3816938.html)
 - [redisTemplate 常用集合使用说明 (一)](https://357029540.iteye.com/blog/2388706)
-- [[springboot 之使用 redistemplate 优雅地操作 redis](https://www.cnblogs.com/superfj/p/9232482.html)](http://www.cnblogs.com/superfj/p/9232482.html)
+- [springboot 之使用 redistemplate 优雅地操作 redis](https://www.cnblogs.com/superfj/p/9232482.html)
 
 ## 连接 Redis 工具
 

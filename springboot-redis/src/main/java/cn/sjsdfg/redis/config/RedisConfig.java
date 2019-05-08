@@ -1,5 +1,6 @@
 package cn.sjsdfg.redis.config;
 
+import cn.sjsdfg.redis.serializer.CustomJacksonSerializer;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,6 +46,18 @@ public class RedisConfig {
     @Bean
     public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
         return new StringRedisTemplate(connectionFactory);
+    }
+
+    @Bean
+    RedisTemplate<String, Object> customRedisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(connectionFactory);
+        //使用StringRedisSerializer来序列化和反序列化redis的key值
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new CustomJacksonSerializer<>(Object.class));
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(new CustomJacksonSerializer<>(Object.class));
+        return redisTemplate;
     }
 
     @Bean
