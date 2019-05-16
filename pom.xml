@@ -20,6 +20,7 @@
         <module>springboot-jwt</module>
         <module>springboot-cache</module>
         <module>springboot-redis</module>
+        <module>springboot-shiro</module>
     </modules>
 
     <properties>
@@ -34,7 +35,6 @@
         </dependency>
     </dependencies>
 
-
     <build>
         <pluginManagement>
             <plugins>
@@ -47,7 +47,6 @@
                         <target>${java.version}</target>
                     </configuration>
                 </plugin>
-
             </plugins>
         </pluginManagement>
     </build>

@@ -26,7 +26,7 @@ public class User implements Serializable {
     private static final long serialVersionUID = -8600845799706524009L;
     @Id
     @Indexed
-    private String uid;
+    private String id;
     private String name;
     private int age;
     @Transient

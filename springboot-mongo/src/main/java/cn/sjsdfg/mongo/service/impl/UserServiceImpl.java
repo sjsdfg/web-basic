@@ -25,6 +25,11 @@ public class UserServiceImpl implements IUser {
     }
 
     @Override
+    public void batchInsertUser(List<User> users) {
+        mongoTemplate.insert(users, User.class);
+    }
+
+    @Override
     public User findUserByName(String name) {
         return mongoTemplate.findOne(new Query(Criteria.where("name").is(name)), User.class);
     }

@@ -10,6 +10,8 @@ import java.util.List;
 public interface IUser {
     void saveUser(User user);
 
+    void batchInsertUser(List<User> users);
+
     User findUserByName(String name);
 
     void removeUser(String name);
