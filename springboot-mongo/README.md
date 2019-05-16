@@ -514,7 +514,39 @@ db.data.find( { a: { $gt: 2 } } ).sort( { c: 1 } )
 db.data.find( { c: 5 } ).sort( { c: 1 } )
 ```
 
+# Spring-Mongo 聚合操作
 
+|操作|对应方法|
+| --------------------------------- | ------------------------------------------------------------ |
+| Pipeline Aggregation Operators    | `bucket`, `bucketAuto`, `count`, `facet`, `geoNear`, `graphLookup`, `group`, `limit`, `lookup`, `match`, `project`, `replaceRoot`, `skip`, `sort`, `unwind` |
+| Set Aggregation Operators         | `setEquals`, `setIntersection`, `setUnion`, `setDifference`, `setIsSubset`, `anyElementTrue`, `allElementsTrue` |
+| Group Aggregation Operators       | `addToSet`, `first`, `last`, `max`, `min`, `avg`, `push`, `sum`, `(*count)`, `stdDevPop`, `stdDevSamp` |
+| Arithmetic Aggregation Operators  | `abs`, `add` (*via `plus`), `ceil`, `divide`, `exp`, `floor`, `ln`, `log`, `log10`, `mod`, `multiply`, `pow`, `sqrt`, `subtract` (*via `minus`), `trunc` |
+| String Aggregation Operators      | `concat`, `substr`, `toLower`, `toUpper`, `stcasecmp`, `indexOfBytes`, `indexOfCP`, `split`, `strLenBytes`, `strLenCP`, `substrCP`, `trim`, `ltrim`, `rtim` |
+| Comparison Aggregation Operators  | `eq` (*via: `is`), `gt`, `gte`, `lt`, `lte`, `ne`            |
+| Array Aggregation Operators       | `arrayElementAt`, `arrayToObject`, `concatArrays`, `filter`, `in`, `indexOfArray`, `isArray`, `range`, `reverseArray`, `reduce`, `size`, `slice`, `zip` |
+| Literal Operators                 | `literal`                                                    |
+| Date Aggregation Operators        | `dayOfYear`, `dayOfMonth`, `dayOfWeek`, `year`, `month`, `week`, `hour`, `minute`, `second`, `millisecond`, `dateToString`, `dateFromString`, `dateFromParts`, `dateToParts`, `isoDayOfWeek`, `isoWeek`, `isoWeekYear` |
+| Variable Operators                | `map`                                                        |
+| Conditional Aggregation Operators | `cond`, `ifNull`, `switch`                                   |
+| Type Aggregation Operators        | `type`                                                       |
+| Convert Aggregation Operators     | `convert`, `toBool`, `toDate`, `toDecimal`, `toDouble`, `toInt`, `toLong`, `toObjectId`, `toString` |
+| Object Aggregation Operators      | `objectToArray`, `mergeObjects`                              |
+
+## 常用聚合操作
+
+- project：列出所有本次查询的字段，包括查询条件的字段和需要搜索的字段；
+- match：搜索条件criteria
+- unwind：某一个字段是集合，将该字段分解成数组
+- group：分组的字段，以及聚合相关查询
+- sum：求和(同sql查询)
+- count：数量(同sql查询)
+- as:别名(同sql查询)
+- addToSet：将符合的字段值添加到一个集合或数组中
+- sort：排序
+- skip & limit：分页查询
+
+  
 
 # 参考资料：
 
@@ -526,3 +558,5 @@ db.data.find( { c: 5 } ).sort( { c: 1 } )
 6. [如何正确看待分页的需求](http://www.ovaistariq.net/404/mysql-paginated-displays-how-to-kill-performance-vs-how-to-improve-performance/#.WxiEK4huaUk)
 7. http://ian.wang/35.htm
 8. https://cnodejs.org/topic/559a0bf493cb46f578f0a601
+9. [Spring-data-mongodb 官方文档](https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#mongo.aggregation.supported-aggregation-operations)
+10. [使用mongoTemplate进行Aggregation聚合查询](https://www.jianshu.com/p/78b96ca40927)
