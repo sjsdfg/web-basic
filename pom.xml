@@ -20,7 +20,7 @@
         <module>springboot-jwt</module>
         <module>springboot-cache</module>
         <module>springboot-redis</module>
-        <module>springboot-shiro</module>
+        <module>springboot-swagger2</module>
     </modules>
 
     <properties>
