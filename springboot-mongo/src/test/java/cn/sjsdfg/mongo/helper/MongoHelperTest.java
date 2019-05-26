@@ -1,8 +1,7 @@
-package cn.sjsdfg.mongo.service;
+package cn.sjsdfg.mongo.helper;
 
 import cn.sjsdfg.mongo.dto.PageResult;
 import cn.sjsdfg.mongo.entity.User;
-import cn.sjsdfg.mongo.helper.MongoPageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
