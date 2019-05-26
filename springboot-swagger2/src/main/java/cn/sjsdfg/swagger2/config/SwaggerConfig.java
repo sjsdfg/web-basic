@@ -19,10 +19,14 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class SwaggerConfig {
     @Bean
     public Docket createRestApi() {
+        // Docket, Springfox’s, primary api configuration mechanism is initialized for swagger specification 2.0
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
+                // select() returns an instance of ApiSelectorBuilder to give fine grained control over the endpoints exposed via swagger.
                 .select()
+                // apis() allows selection of RequestHandler's using a predicate.
                 .apis(RequestHandlerSelectors.basePackage("cn.sjsdfg.swagger2.controller"))
+                // paths() allows selection of Path's using a predicate.
                 .paths(PathSelectors.any())
                 .build();
     }
