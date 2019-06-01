@@ -21,6 +21,7 @@
         <module>springboot-cache</module>
         <module>springboot-redis</module>
         <module>springboot-swagger2</module>
+        <module>common-util</module>
     </modules>
 
     <properties>
