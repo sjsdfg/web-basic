@@ -1,4 +1,4 @@
-package cn.sjsdfg.common.util;
+package cn.sjsdfg.common.util.encrpt;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

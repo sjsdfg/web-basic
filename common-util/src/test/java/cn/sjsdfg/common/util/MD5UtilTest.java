@@ -2,7 +2,7 @@ package cn.sjsdfg.common.util;
 
 import org.junit.Test;
 
-import static cn.sjsdfg.common.util.MD5Util.encrypt;
+import static cn.sjsdfg.common.util.encrpt.MD5Util.encrypt;
 
 /**
  * Created by Joe on 2019/6/1.
