@@ -1,4 +1,4 @@
-package cn.sjsdfg.redis.util;
+package cn.sjsdfg.redis.limiter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -9,10 +9,12 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * Created by Joe on 2019/9/8.
+ *
+ * @author Joe
+ * @date 2019/9/8
  */
 @Component
-public class SimpleRateLimter {
+public class SimpleRateLimiter {
     @Autowired
     private StringRedisTemplate redisTemplate;
 

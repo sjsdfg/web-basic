@@ -1,4 +1,4 @@
-package cn.sjsdfg.redis.util;
+package cn.sjsdfg.redis.limiter;
 
 import cn.sjsdfg.redis.TestBase;
 import org.junit.Test;
@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by Joe on 2019/9/8.
  */
-public class SimpleRateLimterTest extends TestBase {
+public class SimpleRateLimiterTest extends TestBase {
     @Autowired
-    private SimpleRateLimter simpleRateLimter;
+    private SimpleRateLimiter simpleRateLimter;
 
     @Test
     public void test() {
