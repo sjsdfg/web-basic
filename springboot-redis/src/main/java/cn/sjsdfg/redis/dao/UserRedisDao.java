@@ -17,17 +17,19 @@ import java.util.Set;
  */
 @Repository
 public class UserRedisDao {
+    private static final String KEY_FORMAT = "user:$s";
+
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
     public void add(User user) {
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(user.getId(), user);
+        valueOperations.set(String.format(KEY_FORMAT, user.getId()), user);
     }
 
     public User getUser(String id) {
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
-        return (User) valueOperations.get(id);
+        return (User) valueOperations.get(String.format(KEY_FORMAT, id));
     }
 
     public void addByLambda(User user) {
@@ -57,7 +59,7 @@ public class UserRedisDao {
     public List<Object> queryAll() {
         return redisTemplate.executePipelined((RedisConnection redisConnection) -> {
             RedisSerializer<String> stringSerializer = redisTemplate.getStringSerializer();
-            Set<String> keys = redisTemplate.keys("*");
+            Set<String> keys = redisTemplate.keys("user:*");
             if (Objects.nonNull(keys)) {
                 for (String key : keys) {
                     redisConnection.get(stringSerializer.serialize(key));

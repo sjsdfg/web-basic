@@ -95,11 +95,11 @@ public class RedisConfig {
         // 但其实RedisCacheConfiguration默认就是使用StringRedisSerializer序列化key，
         // JdkSerializationRedisSerializer序列化value,所以以下注释代码为默认实现
         // RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
+        //设置默认超过期时间是30秒
         RedisSerializationContext.SerializationPair<Object> pair = RedisSerializationContext.SerializationPair.fromSerializer(serializer);
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeValuesWith(pair)
-                .entryTtl(Duration.ofSeconds(30)); //设置默认超过期时间是30秒
-
+                .entryTtl(Duration.ofSeconds(30));
         return new RedisCacheManager(writer, defaultCacheConfig);
     }
 }
