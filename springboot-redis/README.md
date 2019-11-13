@@ -343,7 +343,7 @@ Jedis 代码重构变革很大
 
 ## 连接 Redis 工具
 
-- https://github.com/necan/RedisDesktopManager-Windows 提供 RedisManager 的开源编译版本
+- https://github.com/necan/RedisDesktopManager 提供 RedisManager 的开源编译版本
 - https://github.com/onewe/RedisDesktopManager-Mac RedisManager 软件的 Mac 版本
 - [AnotherRedisDesktopManager](https://github.com/qishibo/AnotherRedisDesktopManager)：A faster, better and more stable redis desktop manager, compatible with Linux, windows, mac. （国产）
 
