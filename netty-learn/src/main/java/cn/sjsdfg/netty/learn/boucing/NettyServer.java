@@ -6,11 +6,13 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Joe
  * @date 2019/9/21
  */
+@Slf4j
 public class NettyServer {
     private static final int PORT = 8000;
 
@@ -44,5 +46,6 @@ public class NettyServer {
                 System.err.println("端口[" + port + "]绑定失败!");
             }
         });
+        log.info("bind port {}", port);
     }
 }

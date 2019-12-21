@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" packages="org.apache.logging.log4j.core">
+    <Properties>
+        <Property name="fileLogPattern">
+            [%d{yyyy-MM-dd HH:mm:ss.SSSZ}] %-5level [%t] %C{1.}:%L %X %msg%n
+        </Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout pattern="${fileLogPattern}"/>
+        </Console>
+
+        <RollingFile name="APP" fileName="./logs/app.log" filePattern="./logs/app.log-%d{yyyy-MM-dd}.%i">
+            <PatternLayout pattern="${fileLogPattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+
+        <!--info日志只输出info级别的日志-->
+        <RollingFile name="INFO" fileName="./logs/info.log" filePattern="./logs/info.log-%d{yyyy-MM-dd}.%i">
+            <PatternLayout pattern="${fileLogPattern}"/>
+            <Filters>
+                <!--warn及以上级别的日志过滤掉-->
+                <ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <!--单个文件大小-->
+                <SizeBasedTriggeringPolicy size="500MB"/>
+            </Policies>
+            <!--保存日志文件个数-->
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <!--warn日志只输出warn级别的日志-->
+        <RollingFile name="WARN" fileName="./logs/warn.log" filePattern="./logs/warn.log-%d{yyyy-MM-dd}.%i">
+            <PatternLayout pattern="${fileLogPattern}"/>
+            <Filters>
+                <!--error及以上级别的日志过滤掉-->
+                <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <!--单个文件大小-->
+                <SizeBasedTriggeringPolicy size="500MB"/>
+            </Policies>
+            <!--保存日志文件个数-->
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <!--error级别日志输出error及error以上级别的日志-->
+        <RollingFile name="ERROR" fileName="./logs/error.log" filePattern="./logs/error.log-%d{yyyy-MM-dd}.%i">
+            <PatternLayout pattern="${fileLogPattern}"/>
+            <Filters>
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="500MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+        <Root level="DEBUG">
+            <AppenderRef ref="CONSOLE"/>
+        </Root>
+
+        <Logger name="org.apache.zookeeper" level="WARN"/>
+        <Logger name="org.apache.curator" level="WARN"/>
+        <Logger name="com.alibaba.dubbo" level="WARN"/>
+    </Loggers>
+</Configuration>
